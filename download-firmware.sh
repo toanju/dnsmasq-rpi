@@ -13,19 +13,19 @@ RPI_FW="${TFTP_DIR}/rpi4uefiboot"
 function download_uefi_firmware() {
  pushd ${RPI_FW}
   FW_VERSION=$(curl --silent "https://api.github.com/repos/pftf/RPi4/releases/latest" | jq -r .tag_name)
-  curl -LO https://github.com/pftf/RPi4/releases/download/${FW_VERSION}/RPi4_UEFI_Firmware_${FW_VERSION}.zip
-  unzip RPi4_UEFI_Firmware_${FW_VERSION}.zip
-  rm RPi4_UEFI_Firmware_${FW_VERSION}.zip
+  curl -LO "https://github.com/pftf/RPi4/releases/download/${FW_VERSION}/RPi4_UEFI_Firmware_${FW_VERSION}.zip"
+  unzip -u "RPi4_UEFI_Firmware_${FW_VERSION}.zip"
+  rm "RPi4_UEFI_Firmware_${FW_VERSION}.zip"
  popd
 }
 
 function download_rpi_firmware() {
  for f in $FW_FILES; do
-  curl --output-dir "$RPI_FW" -O ${DL_URL}/$f
+  curl --output-dir "$RPI_FW" -O "${DL_URL}/$f"
  done
 
  for f in $FW_OVERLAYS; do
-  curl --output-dir $RPI_FW/overlays -O ${DL_URL}/overlays/$f
+  curl --output-dir $RPI_FW/overlays -O "${DL_URL}/overlays/$f"
  done
 }
 
@@ -49,7 +49,7 @@ device_tree_end=0x200000
 EOF
 
  for o in ${FW_OVERLAYS}; do
-  echo "dtoverlay=$(basename $o .dbto)" >> ${RPI_FW}/config.txt
+  echo "dtoverlay=$(basename "$o" .dbto)" >> ${RPI_FW}/config.txt
  done
 }
 
