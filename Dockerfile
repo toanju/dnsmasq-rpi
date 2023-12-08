@@ -1,4 +1,4 @@
-FROM docker.io/alpine:3.18.5
+FROM docker.io/alpine:3.19.0
 RUN apk -U add dnsmasq curl
 VOLUME /var/lib/tftpboot
 EXPOSE 53 67 69
