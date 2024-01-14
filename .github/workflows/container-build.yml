@@ -43,10 +43,11 @@ jobs:
           #  ${{ env.REGISTRY_QUAY }}/${{ github.repository }}
           tags: |
             type=schedule,pattern=nightly,enable=true,priority=1000
-            type=ref,event=branch,enable=true,priority=600
             type=ref,event=tag,enable=true,priority=600
             type=ref,event=pr,prefix=pr-,enable=true,priority=600
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }},priority=600
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: index
 
       - name: Login to ghcr.io
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3
@@ -62,7 +63,7 @@ jobs:
       #     username: "${{ secrets.QUAY_USERNAME }}"
       #     password: ${{ secrets.QUAY_TOKEN }}
 
-      - name: Push images to registries
+      - name: Build and Push images
         uses: docker/build-push-action@4a13e500e55cf31b7a5d59a38ab2040ab0f42f56 # v5
         with:
           context: .
@@ -70,3 +71,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
