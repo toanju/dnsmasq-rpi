@@ -1,4 +1,4 @@
-FROM docker.io/alpine:3.20.3@sha256:beefdbd8a1da6d2915566fde36db9db0b524eb737fc57cd1367effd16dc0d06d
+FROM docker.io/alpine:3.20.3@sha256:a8f120106f5549715aa966fd7cefaf3b7045f6414fed428684de62fec8c2ca4b
 
 # renovate: datasource=repology depName=alpine_3_20/curl versioning=loose
 ARG CURL_VERSION=8.10.0-r0
