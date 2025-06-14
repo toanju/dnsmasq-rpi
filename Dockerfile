@@ -1,11 +1,11 @@
-FROM docker.io/alpine:3.21.2@sha256:56fa17d2a7e7f168a043a2712e63aed1f8543aeafdcee47c58dcffe38ed51099
+FROM docker.io/alpine:3.22.0@sha256:8a1f59ffb675680d47db6337b49d22281a139e9d709335b492be023728e11715
 
-# renovate: datasource=repology depName=alpine_3_20/curl versioning=loose
-ARG CURL_VERSION=8.11.1-r0
-# renovate: datasource=repology depName=alpine_3_20/dnsmasq versioning=loose
-ARG DNSMASQ_VERSION=2.90-r3
+# renovate: datasource=repology depName=alpine_3_22/curl versioning=loose
+ARG CURL_VERSION=8.14.1-r0	
+# renovate: datasource=repology depName=alpine_3_22/dnsmasq versioning=loose
+ARG DNSMASQ_VERSION=2.91-r0
 
-RUN apk -U add \
+RUN apk -U add --no-cache \
   curl="${CURL_VERSION}" \
   dnsmasq="${DNSMASQ_VERSION}"
 VOLUME /var/lib/tftpboot
