@@ -60,7 +60,7 @@ fi
 # write hostsfile and symlink uefi firmware for hosts in inventory
 write_hostsfile
 # run dnsmasq
-sudo podman run -ti --rm --cap-add=NET_RAW,NET_ADMIN --net=host -v "$PWD/tftpboot":/var/lib/tftpboot:Z -v "$PWD/hosts.rpi4":/etc/hosts.rpi4:Z ghcr.io/toanju/dnsmasq-rpi:latest \
+sudo podman run -ti --rm --cap-add=NET_RAW,NET_ADMIN --net=host -v "$PWD/tftpboot":/var/lib/tftpboot:Z -v "$PWD/HOSTSFILE":/etc/$HOSTSFILE:Z ghcr.io/toanju/dnsmasq-rpi:latest \
 	--no-daemon \
 	--interface=${INTERFACE} \
 	--bind-dynamic \
