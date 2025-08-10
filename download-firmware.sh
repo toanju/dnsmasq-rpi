@@ -9,11 +9,12 @@ FW_FILES="" # bcm2711-rpi-4-b.dtb fixup4.dat start4.elf
 FW_OVERLAYS="miniuart-bt.dbto"
 TFTP_DIR="tftpboot"
 RPI_FW="${TFTP_DIR}/rpi4uefiboot"
+FIRMWARE_REPO="${FIRMWARE_REPO:-pftf/RPi4}"
 
 function download_uefi_firmware() {
  pushd ${RPI_FW}
-  FW_VERSION=$(curl --silent "https://api.github.com/repos/pftf/RPi4/releases/latest" | jq -r .tag_name)
-  curl -LO "https://github.com/pftf/RPi4/releases/download/${FW_VERSION}/RPi4_UEFI_Firmware_${FW_VERSION}.zip"
+  FW_VERSION=$(curl --silent "https://api.github.com/repos/$FIRMWARE_REPO/releases/latest" | jq -r .tag_name)
+  curl -LO "https://github.com/$FIRMWARE_REPO/releases/download/${FW_VERSION}/RPi4_UEFI_Firmware_${FW_VERSION}.zip"
   unzip -u "RPi4_UEFI_Firmware_${FW_VERSION}.zip"
   rm "RPi4_UEFI_Firmware_${FW_VERSION}.zip"
  popd
