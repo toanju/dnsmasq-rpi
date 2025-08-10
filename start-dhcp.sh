@@ -7,9 +7,10 @@ MATCHBOX_PORT="8080"
 MATCHBOX_URL="http://${MATCHBOX_HOST}:${MATCHBOX_PORT}/"
 MATCHBOX_IP="10.10.10.1"
 
+INTERFACE="${INTERFACE:-vlan0}"
+
 # use provided BASE_INTERFACE or use first ether interface
 BASE_INTERFACE=${BASE_INTERFACE:-$(ip -j l l | jq '[.[]|select(.link_type=="ether")][0] | .ifname')}
-INTERFACE="vlan0"
 NTP_SERVER="10.10.10.1"
 DHCP_START="10.10.10.10"
 DHCP_END="10.10.10.100"
@@ -48,9 +49,15 @@ if [ -z "$CHECK_INTERFACE" ]; then
   echo "Please create $INTERFACE, e.g:
   sudo ip l a  link $BASE_INTERFACE type vlan id 200
   sudo ip l l
-  sudo ip a a 10.10.10.1/24 dev $INTERFACE
   sudo ip l s $INTERFACE up
   sudo firewall-cmd --change-zone=$INTERFACE --zone=trusted
+  "
+  exit 1
+fi
+CHECK_ADDRESS=$(ip a l dev "$INTERFACE" scope global)
+if [ -z "$CHECK_ADDRESS" ]; then
+  echo "Please add an IP address to $INTERFACE, e.g:
+  sudo ip a a $MATCHBOX_IP/24 dev $INTERFACE
   "
   exit 1
 fi
