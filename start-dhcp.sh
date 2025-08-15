@@ -17,6 +17,12 @@ DHCP_END="10.10.10.100"
 
 HOSTSFILE="hosts.rpi4"
 
+CONTAINER_RUNTIME="$(command -v podman || command -v docker)"
+if [[ -z "${CONTAINER_RUNTIME}" ]]; then
+  echo "No container runtime found. Please install Podman or Docker."
+  exit 1
+fi
+
 function inc_ip() {
   read -r A B C D <<<"${1//./ }"
   (( D += 1 ))
@@ -48,7 +54,6 @@ CHECK_INTERFACE=$(ip -j l l | jq ".[] | select(.ifname == \"${INTERFACE}\")")
 if [ -z "$CHECK_INTERFACE" ]; then
   echo "Please create $INTERFACE, e.g:
   sudo ip l a  link $BASE_INTERFACE type vlan id 200
-  sudo ip l l
   sudo ip l s $INTERFACE up
   sudo firewall-cmd --change-zone=$INTERFACE --zone=trusted
   "
@@ -67,7 +72,7 @@ fi
 # write hostsfile and symlink uefi firmware for hosts in inventory
 write_hostsfile
 # run dnsmasq
-sudo podman run -ti --rm --cap-add=NET_RAW,NET_ADMIN --net=host -v "$PWD/tftpboot":/var/lib/tftpboot:Z -v "$PWD/HOSTSFILE":/etc/$HOSTSFILE:Z ghcr.io/toanju/dnsmasq-rpi:latest \
+sudo ${CONTAINER_RUNTIME} run -ti --rm --privileged --net=host -v "$PWD/tftpboot":/var/lib/tftpboot:Z -v "$PWD/$HOSTSFILE":/etc/$HOSTSFILE:Z ghcr.io/toanju/dnsmasq-rpi:latest \
 	--no-daemon \
 	--interface=${INTERFACE} \
 	--bind-dynamic \

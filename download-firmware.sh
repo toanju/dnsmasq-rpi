@@ -5,41 +5,41 @@ set -e
 
 BRANCH="master" # or use a tag e.g. 1.20220830
 DL_URL="https://github.com/raspberrypi/firmware/raw/${BRANCH}/boot"
-FW_FILES="" # bcm2711-rpi-4-b.dtb fixup4.dat start4.elf
+FW_FILES="" # bcm2711-rpi-4-b.dtb fixup4.dat start4.elf (all files in uefi firmware zip)
 FW_OVERLAYS="miniuart-bt.dbto"
 TFTP_DIR="tftpboot"
 RPI_FW="${TFTP_DIR}/rpi4uefiboot"
-FIRMWARE_REPO="${FIRMWARE_REPO:-pftf/RPi4}"
+UEFI_FW_REPO="${UEFI_FW_REPO:-toanju/RPi4}" # originally pftf/RPi4
 
 function download_uefi_firmware() {
- pushd ${RPI_FW}
-  FW_VERSION=$(curl --silent "https://api.github.com/repos/$FIRMWARE_REPO/releases/latest" | jq -r .tag_name)
-  curl -LO "https://github.com/$FIRMWARE_REPO/releases/download/${FW_VERSION}/RPi4_UEFI_Firmware_${FW_VERSION}.zip"
-  unzip -u "RPi4_UEFI_Firmware_${FW_VERSION}.zip"
-  rm "RPi4_UEFI_Firmware_${FW_VERSION}.zip"
- popd
+  pushd ${RPI_FW}
+    FW_VERSION=$(curl --silent "https://api.github.com/repos/$UEFI_FW_REPO/releases/latest" | jq -r .tag_name)
+    curl -LO "https://github.com/$UEFI_FW_REPO/releases/download/${FW_VERSION}/RPi4_UEFI_Firmware_${FW_VERSION}.zip"
+    unzip -u "RPi4_UEFI_Firmware_${FW_VERSION}.zip"
+    rm "RPi4_UEFI_Firmware_${FW_VERSION}.zip"
+  popd
 }
 
 function download_rpi_firmware() {
- for f in $FW_FILES; do
-  curl --output-dir "$RPI_FW" -O "${DL_URL}/$f"
- done
+  for f in $FW_FILES; do
+    curl --output-dir "$RPI_FW" -O "${DL_URL}/$f"
+  done
 
- for f in $FW_OVERLAYS; do
-  curl --output-dir $RPI_FW/overlays -O "${DL_URL}/overlays/$f"
- done
+  for f in $FW_OVERLAYS; do
+    curl --output-dir $RPI_FW/overlays -O "${DL_URL}/overlays/$f"
+  done
 }
 
 # see https://github.com/poseidon/dnsmasq/blob/main/get-tftp-files
 function download_pxe_fw() {
- curl -s -o $TFTP_DIR/undionly.kpxe http://boot.ipxe.org/undionly.kpxe
- cp $TFTP_DIR/undionly.kpxe $TFTP_DIR/undionly.kpxe.0
- curl -s -o $TFTP_DIR/ipxe.efi http://boot.ipxe.org/ipxe.efi
- curl -s -o $TFTP_DIR/ipxe.arm64.efi https://boot.ipxe.org/arm64-efi/ipxe.efi
+  curl -s -o $TFTP_DIR/undionly.kpxe http://boot.ipxe.org/undionly.kpxe
+  cp $TFTP_DIR/undionly.kpxe $TFTP_DIR/undionly.kpxe.0
+  curl -s -o $TFTP_DIR/ipxe.efi http://boot.ipxe.org/ipxe.efi
+  curl -s -o $TFTP_DIR/ipxe.arm64.efi https://boot.ipxe.org/arm64-efi/ipxe.efi
 }
 
 function create_config() {
- cat <<EOF > ${RPI_FW}/config.txt
+  cat <<EOF >${RPI_FW}/config.txt
 arm_64bit=1
 enable_uart=1
 enable_gic=1
@@ -49,9 +49,9 @@ device_tree_address=0x1f0000
 device_tree_end=0x200000
 EOF
 
- for o in ${FW_OVERLAYS}; do
-  echo "dtoverlay=$(basename "$o" .dbto)" >> ${RPI_FW}/config.txt
- done
+  for o in ${FW_OVERLAYS}; do
+    echo "dtoverlay=$(basename "$o" .dbto)" >>${RPI_FW}/config.txt
+  done
 }
 
 mkdir -p ${RPI_FW}/overlays
