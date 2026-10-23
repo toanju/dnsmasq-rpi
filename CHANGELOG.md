@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/toanju/dnsmasq-rpi/compare/0.2.3...0.2.4) (2026-10-23)
+
+
+### Bug Fixes
+
+* **deps:** update docker.io/alpine:3.24.3 docker digest to be26560 ([#172](https://github.com/toanju/dnsmasq-rpi/issues/172)) ([a0750c7](https://github.com/toanju/dnsmasq-rpi/commit/a0750c7c70c7c0bf8f03b0d75c7500cd29e920ab))
+
 ## [0.2.3](https://github.com/toanju/dnsmasq-rpi/compare/0.2.2...0.2.3) (2026-10-22)
 
 
