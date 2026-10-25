@@ -1,7 +1,7 @@
 FROM docker.io/alpine:3.24.3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a
 
 # renovate: datasource=repology depName=alpine_3_24/curl versioning=loose
-ARG CURL_VERSION="8.22.0-r0"
+ARG CURL_VERSION="8.23.0-r0"
 # renovate: datasource=repology depName=alpine_3_24/dnsmasq versioning=loose
 ARG DNSMASQ_VERSION="2.92_p2-r0"
 
